@@ -6,24 +6,22 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Nowhy">
-    <title>OS X El Captain 升级之路 - Nowhy</title>
+    <title>平滑升级 nginx - Nowhy</title>
     <meta name="author" content="Nowhy">
     
     
-    <meta name="description" content="El Captain 终于出来了，可以用上期待已久的 Split View 了，将以前很多编辑器的功能在 OS 层面标准化，越来越多的软件都会支持，赞一个 不过升级后也遇到一些问题：">
-<meta name="keywords" content="Mac">
+    <meta name="description" content="由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
+<meta name="keywords" content="技术,nginx">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="OS X El Captain 升级之路">
-<meta property="og:url" content="http://nowhy.org/2015/10/03/First/index.html">
+<meta property="og:title" content="平滑升级 nginx">
+<meta property="og:url" content="http://nowhy.org/2017/11/22/graceful-update-nginx/index.html">
 <meta property="og:site_name" content="Nowhy">
-<meta property="og:description" content="El Captain 终于出来了，可以用上期待已久的 Split View 了，将以前很多编辑器的功能在 OS 层面标准化，越来越多的软件都会支持，赞一个 不过升级后也遇到一些问题：">
+<meta property="og:description" content="由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:image" content="http://7xn8l1.com1.z0.glb.clouddn.com/qq_black_bar_bug.png">
-<meta property="og:updated_time" content="2017-02-04T06:20:19.000Z">
+<meta property="og:updated_time" content="2017-11-22T03:32:02.774Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="OS X El Captain 升级之路">
-<meta name="twitter:description" content="El Captain 终于出来了，可以用上期待已久的 Split View 了，将以前很多编辑器的功能在 OS 层面标准化，越来越多的软件都会支持，赞一个 不过升级后也遇到一些问题：">
-<meta name="twitter:image" content="http://7xn8l1.com1.z0.glb.clouddn.com/qq_black_bar_bug.png">
+<meta name="twitter:title" content="平滑升级 nginx">
+<meta name="twitter:description" content="由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
     
     
     
@@ -166,40 +164,32 @@ var _hmt = _hmt || [];
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title" itemprop="headline">
-            OS X El Captain 升级之路
+            平滑升级 nginx
         </h1>
     
     <div class="post-meta">
-    <time itemprop="datePublished" content="Sat Oct 03 2015 12:50:11 GMT+0800">
+    <time itemprop="datePublished" content="Wed Nov 22 2017 11:13:51 GMT+0800">
 	
-		    2015年10月03日
+		    2017年11月22日
     	
     </time>
-    
-        <span>分类 </span>
-        
-    <a class="category-link" href="/categories/数码/">数码</a>
-
-
     
 </div>
 </div>
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p>El Captain 终于出来了，可以用上期待已久的 Split View 了，将以前很多编辑器的功能在 OS 层面标准化，越来越多的软件都会支持，赞一个</p>
-<p>不过升级后也遇到一些问题：</p>
+            <p>由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：</p>
 <a id="more"></a>
-<p>第一个比较囧的事情是，DNS 管理又回到了 10.9- 的方式了。。这玩意改来改去的，真是捉急</p>
-<h6 id="清-dns-cache"><a href="#清-dns-cache" class="headerlink" title="清 dns cache"></a>清 dns cache</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo dscacheutil -flushcache</span><br><span class="line">sudo killall -HUP mDNSResponder</span><br><span class="line">say flushed</span><br></pre></td></tr></table></figure>
-<p><br>第二个比较囧的事情，El Captain 新加了一层 Rootless Security</p>
-<p><a href="https://developer.apple.com/videos/play/wwdc2015-706/" target="_blank" rel="noopener">WWDC: Security and Your Apps</a></p>
-<p>很多系统级别的目录/文件都被 Lock 起来了（打了 restricted flag），如果你试图向 /usr/bin 以及 /System 等系统级目录写入或者修改，就会报错 <code>Operation not permitted</code>，嗯，即使你用了 sudo，即使你是 admin</p>
-<h6 id="解决办法有二："><a href="#解决办法有二：" class="headerlink" title="解决办法有二："></a>解决办法有二：</h6><p>1.直接禁用该机制，重启进入 recovery 模式，然后 bash：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">csrutil <span class="built_in">disable</span></span><br></pre></td></tr></table></figure>
-<p><br>2.保留该安全机制，不要碰这些 Apple 想为你守护的地方，如果要建 bin 等，用 /usr/local/bin，这个没被锁</p>
-<p>还有就是一些软件还需要兼容，QQ 就有黑框 bug，=。=</p>
-<p><img src="http://7xn8l1.com1.z0.glb.clouddn.com/qq_black_bar_bug.png" alt="QQ黑框bug"></p>
+<ol>
+<li>首先当然是备份原文件，升级 nginx 说白了就是替换可执行文件 sbin/nginx，先 mv 备份之</li>
+<li>cp 新的 nginx 到 sbin/ 下</li>
+<li><code>kill -USR2 `cat log/nginx.pid` </code>，nginx 主进程吃这个信号后，会再起一个新的 nginx 主进程，log 下会生成新的 nginx.pid，老的会变成 nginx.pid.oldbin，即此时同时有 2 个版本的 nginx 运行</li>
+<li><code>kill -WINCH `cat log/nginx.pid.oldbin` </code>，平滑杀掉老 worker，这会让老 worker 处理完当前请求后再死</li>
+<li>下来看新 nginx 是否稳定，如果稳定，ps 几次，看到没有老 worker 之后，就可以 <code>kill -QUIT `cat log/nginx.pid.oldbin` </code> 杀掉老 master</li>
+<li>如果不稳定，需要回滚，则直接 <code>kill -TERM `cat log/nginx.pid` </code> 终结新 master，新 master 挂掉后，老 master 会自动开始启动 worker 接受请求（如果没有则 kill -HUP 之）</li>
+</ol>
+<p>nginx 还是吃很多种信号的…</p>
 
             
                 
@@ -212,7 +202,7 @@ var _hmt = _hmt || [];
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/Mac/">Mac</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/nginx/">nginx</a> <a class="tag tag--primary tag--small t-link" href="/tags/技术/">技术</a>
 
             </div>
         
@@ -221,7 +211,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/22/graceful-update-nginx/"  data-tooltip="平滑升级 nginx">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -229,7 +219,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/03/First/" data-tooltip="OS X El Captain 升级之路">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -239,7 +229,7 @@ var _hmt = _hmt || [];
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action">
-            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2015/10/03/First/&amp;title=分享博客：Nowhy&#39;s blog 【OS X El Captain 升级之路】">
+            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2017/11/22/graceful-update-nginx/&amp;title=分享博客：Nowhy&#39;s blog 【平滑升级 nginx】">
                 <i class="fa fa-weibo"></i>
             </a>
         </li>
@@ -274,7 +264,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/22/graceful-update-nginx/"  data-tooltip="平滑升级 nginx">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -282,7 +272,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/03/First/" data-tooltip="OS X El Captain 升级之路">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -292,7 +282,7 @@ var _hmt = _hmt || [];
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action">
-            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2015/10/03/First/&amp;title=分享博客：Nowhy&#39;s blog 【OS X El Captain 升级之路】">
+            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2017/11/22/graceful-update-nginx/&amp;title=分享博客：Nowhy&#39;s blog 【平滑升级 nginx】">
                 <i class="fa fa-weibo"></i>
             </a>
         </li>
@@ -311,17 +301,17 @@ var _hmt = _hmt || [];
                 <div id="share-options-bar" class="share-options-bar" data-behavior="3">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://nowhy.org/2015/10/03/First/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://nowhy.org/2017/11/22/graceful-update-nginx/">
                 <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://nowhy.org/2015/10/03/First/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://nowhy.org/2017/11/22/graceful-update-nginx/">
                 <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://nowhy.org/2015/10/03/First/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://nowhy.org/2017/11/22/graceful-update-nginx/">
                 <i class="fa fa-twitter"></i><span>Share on Twitter</span>
             </a>
         </li>
