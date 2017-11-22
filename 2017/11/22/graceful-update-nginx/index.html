@@ -10,18 +10,18 @@
     <meta name="author" content="Nowhy">
     
     
-    <meta name="description" content="由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
+    <meta name="description" content="虽说升级 nginx 的需求不多，但要干点啥发现 nginx 编译时候少编了个模块，必须重编的需求，还是很多的… -_-! 由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 ngi">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="平滑升级 nginx">
 <meta property="og:url" content="http://nowhy.org/2017/11/22/graceful-update-nginx/index.html">
 <meta property="og:site_name" content="Nowhy">
-<meta property="og:description" content="由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
+<meta property="og:description" content="虽说升级 nginx 的需求不多，但要干点啥发现 nginx 编译时候少编了个模块，必须重编的需求，还是很多的… -_-! 由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2017-11-22T03:39:48.778Z">
+<meta property="og:updated_time" content="2017-11-22T03:54:13.865Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="平滑升级 nginx">
-<meta name="twitter:description" content="由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
+<meta name="twitter:description" content="虽说升级 nginx 的需求不多，但要干点啥发现 nginx 编译时候少编了个模块，必须重编的需求，还是很多的… -_-! 由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
     
     
     
@@ -185,7 +185,8 @@ var _hmt = _hmt || [];
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p>由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：</p>
+            <p>虽说升级 nginx 的需求不多，但要干点啥发现 nginx 编译时候少编了个模块，必须重编的需求，还是很多的… -_-!</p>
+<p>由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：</p>
 <a id="more"></a>
 <ol>
 <li>首先当然是备份原文件，升级 nginx 说白了就是替换可执行文件 sbin/nginx，先 mv 备份之</li>
