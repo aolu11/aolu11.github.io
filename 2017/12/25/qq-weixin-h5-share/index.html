@@ -6,22 +6,22 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Nowhy">
-    <title>平滑升级 nginx - Nowhy</title>
+    <title>QQ/微信二次分享 - Nowhy</title>
     <meta name="author" content="Nowhy">
     
     
-    <meta name="description" content="虽说升级 nginx 的需求不多，但要干点啥发现 nginx 编译时候少编了个模块，必须重编的需求，还是很多的… -_-! 由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 ngi">
-<meta name="keywords" content="nginx">
+    <meta name="description" content="前段时间做了微信的二次分享，其实比较简单，网上一搜一大把，就是引入微信的 jsapi，分别调用wx.onMenuShareAppMessage / wx.onMenuShareTimeline等方法即可">
+<meta name="keywords" content="share">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="平滑升级 nginx">
-<meta property="og:url" content="http://nowhy.org/2017/11/22/graceful-update-nginx/index.html">
+<meta property="og:title" content="QQ&#x2F;微信二次分享">
+<meta property="og:url" content="http://nowhy.org/2017/12/25/qq-weixin-h5-share/index.html">
 <meta property="og:site_name" content="Nowhy">
-<meta property="og:description" content="虽说升级 nginx 的需求不多，但要干点啥发现 nginx 编译时候少编了个模块，必须重编的需求，还是很多的… -_-! 由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
+<meta property="og:description" content="前段时间做了微信的二次分享，其实比较简单，网上一搜一大把，就是引入微信的 jsapi，分别调用wx.onMenuShareAppMessage / wx.onMenuShareTimeline等方法即可">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2017-11-22T03:54:13.865Z">
+<meta property="og:updated_time" content="2017-12-25T09:10:26.713Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="平滑升级 nginx">
-<meta name="twitter:description" content="虽说升级 nginx 的需求不多，但要干点啥发现 nginx 编译时候少编了个模块，必须重编的需求，还是很多的… -_-! 由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：">
+<meta name="twitter:title" content="QQ&#x2F;微信二次分享">
+<meta name="twitter:description" content="前段时间做了微信的二次分享，其实比较简单，网上一搜一大把，就是引入微信的 jsapi，分别调用wx.onMenuShareAppMessage / wx.onMenuShareTimeline等方法即可">
     
     
     
@@ -164,13 +164,13 @@ var _hmt = _hmt || [];
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title" itemprop="headline">
-            平滑升级 nginx
+            QQ/微信二次分享
         </h1>
     
     <div class="post-meta">
-    <time itemprop="datePublished" content="Wed Nov 22 2017 11:13:51 GMT+0800">
+    <time itemprop="datePublished" content="Mon Dec 25 2017 16:14:49 GMT+0800">
 	
-		    2017年11月22日
+		    2017年12月25日
     	
     </time>
     
@@ -185,19 +185,23 @@ var _hmt = _hmt || [];
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p>虽说升级 nginx 的需求不多，但要干点啥发现 nginx 编译时候少编了个模块，必须重编的需求，还是很多的… -_-!</p>
-<p>由于 nginx 重启非常快，以前并不在意 nginx 的重启方式，升级 nginx 都是暴力杀掉，替换文件后再起来，反正机器多，滚动升级没啥影响，最近因为线上服务器数量很少，就稍微看了下 nginx 的平滑升级，尽量少影响服务：</p>
+            <p>前段时间做了微信的二次分享，其实比较简单，网上一搜一大把，就是引入微信的 jsapi，分别调用<code>wx.onMenuShareAppMessage / wx.onMenuShareTimeline</code>等方法即可</p>
 <a id="more"></a>
+<p>QQ 本质上也是一样的，但 QQ 的文档比微信更乱，后来搜了一下发现 QQ 除了用 js sdk 还可以通过<code>&lt;meta&gt;</code>标签来简单指定，感觉好像不用嵌 js sdk 了，于是：</p>
+<pre><code>&lt;meta itemprop=&quot;name&quot; content=&quot;这是分享的标题&quot;/&gt;
+&lt;meta itemprop=&quot;image&quot; content=&quot;http://imgcache.qq.com/qqshow/ac/v4/global/logo.png&quot; /&gt;
+&lt;meta name=&quot;description&quot; itemprop=&quot;description&quot; content=&quot;这是要分享的内容&quot; /&gt;
+</code></pre><p>这是官方文档里抽出来的（虽然不知是猴年马月没更新过的文档了），几个小问题：</p>
 <ol>
-<li>首先当然是备份原文件，升级 nginx 说白了就是替换可执行文件 sbin/nginx，先 mv 备份之</li>
-<li>cp 新的 nginx 到 sbin/ 下</li>
-<li><code>kill -USR2 `cat log/nginx.pid` </code>，nginx 主进程吃这个信号后，会再起一个新的 nginx 主进程，log 下会生成新的 nginx.pid，老的会变成 nginx.pid.oldbin，即此时同时有 2 个版本的 nginx 运行</li>
-<li><code>kill -WINCH `cat log/nginx.pid.oldbin` </code>，平滑杀掉老 worker，这会让老 worker 处理完当前请求后再死</li>
-<li>下来看新 nginx 是否稳定，如果稳定，ps 几次，看到没有老 worker 之后，就可以 <code>kill -QUIT `cat log/nginx.pid.oldbin` </code> 杀掉老 master</li>
-<li>如果不稳定，需要回滚，则直接 <code>kill -TERM `cat log/nginx.pid` </code> 终结新 master，新 master 挂掉后，老 master 会自动开始启动 worker 接受请求（如果没有则 kill -HUP 之）</li>
+<li>H5 标准，用了 itemprop 不能再用 name</li>
+<li>H5 标准，空标签无需再自闭合</li>
 </ol>
-<p>nginx 还是吃很多种信号的…</p>
-
+<p>…以上是扯蛋的，其实真正的问题在于，其它的都生效，但是标题，优先级比<code>&lt;title&gt;</code>低，这意味着只要网页有<code>&lt;title&gt;</code>，<code>&lt;meta&gt;</code>指定什么都没用，这有时候就蛋疼了，所以结论一下：</p>
+<p>用<code>&lt;meta&gt;</code>能简单实现二次分享的内容控制，缺点在于优先级被<code>&lt;title&gt;</code>碾压，如果要求和<code>&lt;title&gt;</code>不一样，必须用 js sdk</p>
+<p>对了…QQ 二次分享不像微信支持定制不同渠道的文案，不管分享到哪，都只有一套…（不管用<code>&lt;meta&gt;</code>还是 js sdk），不过对于微信朋友圈有个标题内容互换的选项…</p>
+<p><a href="http://open.mobile.qq.com/api/component/share" target="_blank" rel="noopener">http://open.mobile.qq.com/api/component/share</a></p>
+<p>看这个页面就行了</p>
+<h6 id="手Q-限制，分享-URL-必须与页面-URL-同一域名，否则设置不生效"><a href="#手Q-限制，分享-URL-必须与页面-URL-同一域名，否则设置不生效" class="headerlink" title="手Q 限制，分享 URL 必须与页面 URL 同一域名，否则设置不生效"></a>手Q 限制，分享 URL 必须与页面 URL 同一域名，否则设置不生效</h6>
             
                 
 
@@ -209,7 +213,7 @@ var _hmt = _hmt || [];
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/nginx/">nginx</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/share/">share</a>
 
             </div>
         
@@ -218,7 +222,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/25/qq-weixin-h5-share/"  data-tooltip="QQ/微信二次分享">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -226,7 +230,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/03/First/" data-tooltip="OS X El Captain 升级之路">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/22/graceful-update-nginx/" data-tooltip="平滑升级 nginx">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -236,7 +240,7 @@ var _hmt = _hmt || [];
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action">
-            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2017/11/22/graceful-update-nginx/&amp;title=分享博客：Nowhy&#39;s blog 【平滑升级 nginx】">
+            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2017/12/25/qq-weixin-h5-share/&amp;title=分享博客：Nowhy&#39;s blog 【QQ/微信二次分享】">
                 <i class="fa fa-weibo"></i>
             </a>
         </li>
@@ -271,7 +275,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/25/qq-weixin-h5-share/"  data-tooltip="QQ/微信二次分享">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -279,7 +283,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/03/First/" data-tooltip="OS X El Captain 升级之路">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/22/graceful-update-nginx/" data-tooltip="平滑升级 nginx">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -289,7 +293,7 @@ var _hmt = _hmt || [];
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action">
-            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2017/11/22/graceful-update-nginx/&amp;title=分享博客：Nowhy&#39;s blog 【平滑升级 nginx】">
+            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2017/12/25/qq-weixin-h5-share/&amp;title=分享博客：Nowhy&#39;s blog 【QQ/微信二次分享】">
                 <i class="fa fa-weibo"></i>
             </a>
         </li>
@@ -308,17 +312,17 @@ var _hmt = _hmt || [];
                 <div id="share-options-bar" class="share-options-bar" data-behavior="3">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://nowhy.org/2017/11/22/graceful-update-nginx/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://nowhy.org/2017/12/25/qq-weixin-h5-share/">
                 <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://nowhy.org/2017/11/22/graceful-update-nginx/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://nowhy.org/2017/12/25/qq-weixin-h5-share/">
                 <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://nowhy.org/2017/11/22/graceful-update-nginx/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://nowhy.org/2017/12/25/qq-weixin-h5-share/">
                 <i class="fa fa-twitter"></i><span>Share on Twitter</span>
             </a>
         </li>
