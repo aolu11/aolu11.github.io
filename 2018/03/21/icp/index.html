@@ -6,22 +6,24 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Nowhy">
-    <title>QQ/微信二次分享 - Nowhy</title>
+    <title>2018 年 ICP 备案踩坑记录 - Nowhy</title>
     <meta name="author" content="Nowhy">
     
     
-    <meta name="description" content="前段时间做了微信的二次分享，其实比较简单，网上一搜一大把，就是引入微信的 jsapi，分别调用wx.onMenuShareAppMessage / wx.onMenuShareTimeline等方法即可">
-<meta name="keywords" content="share">
+    <meta name="description" content="前几天又做了一次域名备案，没想到又踩上了几个新坑，记录一下">
+<meta name="keywords" content="icp,备案">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="QQ&#x2F;微信二次分享">
-<meta property="og:url" content="http://nowhy.org/2017/12/25/qq-weixin-h5-share/index.html">
+<meta property="og:title" content="2018 年 ICP 备案踩坑记录">
+<meta property="og:url" content="http://nowhy.org/2018/03/21/icp/index.html">
 <meta property="og:site_name" content="Nowhy">
-<meta property="og:description" content="前段时间做了微信的二次分享，其实比较简单，网上一搜一大把，就是引入微信的 jsapi，分别调用wx.onMenuShareAppMessage / wx.onMenuShareTimeline等方法即可">
+<meta property="og:description" content="前几天又做了一次域名备案，没想到又踩上了几个新坑，记录一下">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2017-12-25T09:10:26.713Z">
+<meta property="og:image" content="http://7xn8l1.com1.z0.glb.clouddn.com/icp.png?imageView2/2/w/800/format/webp">
+<meta property="og:updated_time" content="2018-03-21T06:55:21.816Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="QQ&#x2F;微信二次分享">
-<meta name="twitter:description" content="前段时间做了微信的二次分享，其实比较简单，网上一搜一大把，就是引入微信的 jsapi，分别调用wx.onMenuShareAppMessage / wx.onMenuShareTimeline等方法即可">
+<meta name="twitter:title" content="2018 年 ICP 备案踩坑记录">
+<meta name="twitter:description" content="前几天又做了一次域名备案，没想到又踩上了几个新坑，记录一下">
+<meta name="twitter:image" content="http://7xn8l1.com1.z0.glb.clouddn.com/icp.png?imageView2/2/w/800/format/webp">
     
     
     
@@ -164,13 +166,13 @@ var _hmt = _hmt || [];
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title" itemprop="headline">
-            QQ/微信二次分享
+            2018 年 ICP 备案踩坑记录
         </h1>
     
     <div class="post-meta">
-    <time itemprop="datePublished" content="Mon Dec 25 2017 16:14:49 GMT+0800">
+    <time itemprop="datePublished" content="Wed Mar 21 2018 14:29:35 GMT+0800">
 	
-		    2017年12月25日
+		    2018年03月21日
     	
     </time>
     
@@ -185,23 +187,23 @@ var _hmt = _hmt || [];
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p>前段时间做了微信的二次分享，其实比较简单，网上一搜一大把，就是引入微信的 jsapi，分别调用<code>wx.onMenuShareAppMessage / wx.onMenuShareTimeline</code>等方法即可</p>
+            <p>前几天又做了一次域名备案，没想到又踩上了几个新坑，记录一下</p>
 <a id="more"></a>
-<p>QQ 本质上也是一样的，但 QQ 的文档比微信更乱，后来搜了一下发现 QQ 除了用 js sdk 还可以通过<code>&lt;meta&gt;</code>标签来简单指定，感觉好像不用嵌 js sdk 了，于是：</p>
-<pre><code>&lt;meta itemprop=&quot;name&quot; content=&quot;这是分享的标题&quot;/&gt;
-&lt;meta itemprop=&quot;image&quot; content=&quot;http://imgcache.qq.com/qqshow/ac/v4/global/logo.png&quot; /&gt;
-&lt;meta name=&quot;description&quot; itemprop=&quot;description&quot; content=&quot;这是要分享的内容&quot; /&gt;
-</code></pre><p>这是官方文档里抽出来的（虽然不知是猴年马月没更新过的文档了），几个小问题：</p>
-<ol>
-<li>H5 标准，用了 itemprop 不能再用 name</li>
-<li>H5 标准，空标签无需再自闭合</li>
-</ol>
-<p>…以上是扯蛋的，其实真正的问题在于，其它的都生效，但是标题，优先级比<code>&lt;title&gt;</code>低，这意味着只要网页有<code>&lt;title&gt;</code>，<code>&lt;meta&gt;</code>指定什么都没用，这有时候就蛋疼了，所以结论一下：</p>
-<p>用<code>&lt;meta&gt;</code>能简单实现二次分享的内容控制，缺点在于优先级被<code>&lt;title&gt;</code>碾压，如果要求和<code>&lt;title&gt;</code>不一样，必须用 js sdk</p>
-<p>对了…QQ 二次分享不像微信支持定制不同渠道的文案，不管分享到哪，都只有一套…（不管用<code>&lt;meta&gt;</code>还是 js sdk），不过对于微信朋友圈有个标题内容互换的选项…</p>
-<p><a href="http://open.mobile.qq.com/api/component/share" target="_blank" rel="noopener">http://open.mobile.qq.com/api/component/share</a></p>
-<p>看这个页面就行了</p>
-<h6 id="手Q-限制，分享-URL-必须与页面-URL-同一域名，否则设置不生效"><a href="#手Q-限制，分享-URL-必须与页面-URL-同一域名，否则设置不生效" class="headerlink" title="手Q 限制，分享 URL 必须与页面 URL 同一域名，否则设置不生效"></a>手Q 限制，分享 URL 必须与页面 URL 同一域名，否则设置不生效</h6>
+<h4 id="后缀问题"><a href="#后缀问题" class="headerlink" title="后缀问题"></a>后缀问题</h4><p>不是所有后缀都可以备案，这个大家都知道了，但怎么精准查询哪些能备案呢？</p>
+<p><a href="http://www.miitbeian.gov.cn/" target="_blank" rel="noopener">工信部备案网站</a> 官网 =&gt; 公共查询 =&gt; 域名类型，到这里，好了，坑来了，页面上有个查询表，可以模糊查询还可以精确查询，好像很好使…</p>
+<p><img src="http://7xn8l1.com1.z0.glb.clouddn.com/icp.png?imageView2/2/w/800/format/webp" alt="icp"></p>
+<p>然而…这个不对，这个表里的是已注册的，但并非已批复的，只有工信部明确批复的后缀才可以备案，玄机在图中红框里的链接，点击进去一个新页面</p>
+<p>新页面有个大表格，这应该对了吧，不好意思，这表格里的也不是，真正的列表在页面最下方，有各种<strong>《工业和信息化部关于同意XXXX公司成为YY顶级域名注册管理机构的批复》</strong>，每个文件是一部分域名的批复，所以要看的是这个批复文件列表，在列表里的就可以备案，不在的就不行</p>
+<h4 id="服务商问题"><a href="#服务商问题" class="headerlink" title="服务商问题"></a>服务商问题</h4><p>还记得备案需要域名证书吗？</p>
+<p>以前在 Godaddy 之类国外服务商注册的域名，可以自己用工具生成一张很搞笑的证书</p>
+<p>不好意思：</p>
+<blockquote>
+<p>2018 年 1 月 1 日开始，只有在国内服务商注册的域名才可以在国内备案！！</p>
+</blockquote>
+<p>所以，不要再去国外注册了，一旦你注了，想转移回来是可以的，但是还要注意注册后的 2 个月之内域名是不能转移的（这是注册局规定的，服务商也没办法）</p>
+<p>再有就是域名还必须要实名认证，认证信息和备案时提交的信息必须完全一致</p>
+<p>处处是坑啊！！！</p>
+
             
                 
 
@@ -213,7 +215,7 @@ var _hmt = _hmt || [];
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/share/">share</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/icp/">icp</a> <a class="tag tag--primary tag--small t-link" href="/tags/备案/">备案</a>
 
             </div>
         
@@ -222,7 +224,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/21/icp/"  data-tooltip="2018 年 ICP 备案踩坑记录">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -230,7 +232,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/22/graceful-update-nginx/" data-tooltip="平滑升级 nginx">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/25/qq-weixin-h5-share/" data-tooltip="QQ/微信二次分享">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -240,7 +242,7 @@ var _hmt = _hmt || [];
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action">
-            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2017/12/25/qq-weixin-h5-share/&amp;title=分享博客：Nowhy&#39;s blog 【QQ/微信二次分享】">
+            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2018/03/21/icp/&amp;title=分享博客：Nowhy&#39;s blog 【2018 年 ICP 备案踩坑记录】">
                 <i class="fa fa-weibo"></i>
             </a>
         </li>
@@ -275,7 +277,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/21/icp/"  data-tooltip="2018 年 ICP 备案踩坑记录">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -283,7 +285,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/22/graceful-update-nginx/" data-tooltip="平滑升级 nginx">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/25/qq-weixin-h5-share/" data-tooltip="QQ/微信二次分享">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -293,7 +295,7 @@ var _hmt = _hmt || [];
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action">
-            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2017/12/25/qq-weixin-h5-share/&amp;title=分享博客：Nowhy&#39;s blog 【QQ/微信二次分享】">
+            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2018/03/21/icp/&amp;title=分享博客：Nowhy&#39;s blog 【2018 年 ICP 备案踩坑记录】">
                 <i class="fa fa-weibo"></i>
             </a>
         </li>
@@ -312,17 +314,17 @@ var _hmt = _hmt || [];
                 <div id="share-options-bar" class="share-options-bar" data-behavior="3">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://nowhy.org/2017/12/25/qq-weixin-h5-share/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://nowhy.org/2018/03/21/icp/">
                 <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://nowhy.org/2017/12/25/qq-weixin-h5-share/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://nowhy.org/2018/03/21/icp/">
                 <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://nowhy.org/2017/12/25/qq-weixin-h5-share/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://nowhy.org/2018/03/21/icp/">
                 <i class="fa fa-twitter"></i><span>Share on Twitter</span>
             </a>
         </li>
