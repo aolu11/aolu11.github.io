@@ -10,18 +10,18 @@
     <meta name="author" content="Nowhy">
     
     
-    <meta name="description" content="微信对于弹窗授权的限制越来越严，wx.getUserInfo 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验 那么现在怎么做微信登录？ 应当通过一个 open-type=&amp;quot;getUserInfo&amp;quot; 的 &amp;lt;but">
+    <meta name="description" content="微信对于弹窗授权的限制越来越严，wx.getUserInfo 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验 那么现在怎么做微信登录？">
 <meta name="keywords" content="微信登录,小程序,审核,getUserInfo">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="正确实现微信小程序登录">
 <meta property="og:url" content="http://nowhy.org/2020/02/01/weixin-miniprogram-login/index.html">
 <meta property="og:site_name" content="Nowhy">
-<meta property="og:description" content="微信对于弹窗授权的限制越来越严，wx.getUserInfo 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验 那么现在怎么做微信登录？ 应当通过一个 open-type=&amp;quot;getUserInfo&amp;quot; 的 &amp;lt;button&amp;gt;，让用户显式点击从而弹窗授权，也就说用户主动想登录了，你才能弹窗 但就因为这个按钮，就对微">
+<meta property="og:description" content="微信对于弹窗授权的限制越来越严，wx.getUserInfo 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验 那么现在怎么做微信登录？">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2020-02-01T05:15:00.346Z">
+<meta property="og:updated_time" content="2020-02-01T05:22:42.325Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="正确实现微信小程序登录">
-<meta name="twitter:description" content="微信对于弹窗授权的限制越来越严，wx.getUserInfo 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验 那么现在怎么做微信登录？ 应当通过一个 open-type=&amp;quot;getUserInfo&amp;quot; 的 &amp;lt;button&amp;gt;，让用户显式点击从而弹窗授权，也就说用户主动想登录了，你才能弹窗 但就因为这个按钮，就对微">
+<meta name="twitter:description" content="微信对于弹窗授权的限制越来越严，wx.getUserInfo 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验 那么现在怎么做微信登录？">
     
     
     
@@ -187,6 +187,7 @@ var _hmt = _hmt || [];
         <div class="main-content-wrap">
             <p>微信对于弹窗授权的限制越来越严，<code>wx.getUserInfo</code> 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验</p>
 <p>那么现在怎么做微信登录？</p>
+<a id="more"></a>
 <p>应当通过一个 <code>open-type=&quot;getUserInfo&quot;</code> 的 <code>&lt;button&gt;</code>，让用户显式点击从而弹窗授权，也就说用户<strong>主动想登录</strong>了，你才能弹窗</p>
 <p>但就因为这个按钮，就对微信登录的实现产生了很大影响，因为时序变了：</p>
 <p>之前完全可以：</p>
@@ -200,14 +201,13 @@ var _hmt = _hmt || [];
 <li>如果你先 wx.login，不知道用户什么时候会点击按钮，所以没法把 code 和 userinfo 在同一个请求中丢给业务 server</li>
 <li>如果你先让用户点击按钮，在回调中拿到 userinfo 后再 wx.login，再请求业务 server，也不行，这是最大的陷阱。因为回调中拿到的 userinfo 是微信用点击按钮时（时间点 A）你的 sessionKey 加密的，当在回调中已经获得 userinfo 时再次调用 wx.login（时间点B），会修改你的 sessionKey（微信那边你的应用同时只会有一个 sessionKey），所以用这个 code 换回的 sessionKey 已经和时间点 A 的不一样了，是解不开 userinfo 的</li>
 </ul>
-<p>结论：正确的流程：</p>
-<ol>
+<h4 id="结论：正确的流程："><a href="#结论：正确的流程：" class="headerlink" title="结论：正确的流程："></a>结论：正确的流程：</h4><ol>
 <li>当用户进入登录页时，wx.login 拿到 code，请求业务 server，并去微信换 sessionKey，然后缓存起来（注1）</li>
 <li>当用户点击登录按钮时，拿到 userinfo，请求业务 server，server 使用 sessionKey 解密该 userinfo</li>
 <li>之后就没什么好说的，openId 和 unionId 都拿到了，就看你的业务登录怎么实现了</li>
 </ol>
 <p>注1：这个缓存也是有点门道的，因为通过按钮拿到的 userinfo 中，openId 也是密文，因此无法通过 openId 来做关联，所以只能自己实现一套临时 session，要么就用 cookie，要么就自己写一个 uuid 到 client，当用户拿到 userinfo 之后请求时候再带上，道理都一样</p>
-<p>以为这就完了么？NO！</p>
+<p><strong>以为这就完了么？NO！</strong></p>
 <p>微信在2019年中又发布了新规，一般应用不得一开始就让用户登录，必须要在用户了解小程序的基本功能之后方可引导登录，也就说不但不能自动弹窗授权，甚至也不能一开始就自动跳登录页，必须设计一些匿名状态可见的页面，然后当用户手动触发某些操作（必须发布内容）才可引导登录</p>
 <p>并且！！登录页除了登录按钮之后，还必须设计拒绝按钮，即用户即使进入了登录页，仍然可以取消并返回匿名状态</p>
 <p>不按照这样设计，对不起，审核打回，改好重新提审。</p>
