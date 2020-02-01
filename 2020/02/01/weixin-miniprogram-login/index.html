@@ -6,24 +6,22 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Nowhy">
-    <title>2018 年 ICP 备案踩坑记录 - Nowhy</title>
+    <title>正确实现微信小程序登录 - Nowhy</title>
     <meta name="author" content="Nowhy">
     
     
-    <meta name="description" content="前几天又做了一次域名备案，没想到又踩上了几个新坑，记录一下">
-<meta name="keywords" content="icp,备案">
+    <meta name="description" content="微信对于弹窗授权的限制越来越严，wx.getUserInfo 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验 那么现在怎么做微信登录？ 应当通过一个 open-type=&amp;quot;getUserInfo&amp;quot; 的 &amp;lt;but">
+<meta name="keywords" content="微信登录,小程序,审核,getUserInfo">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="2018 年 ICP 备案踩坑记录">
-<meta property="og:url" content="http://nowhy.org/2018/03/21/icp/index.html">
+<meta property="og:title" content="正确实现微信小程序登录">
+<meta property="og:url" content="http://nowhy.org/2020/02/01/weixin-miniprogram-login/index.html">
 <meta property="og:site_name" content="Nowhy">
-<meta property="og:description" content="前几天又做了一次域名备案，没想到又踩上了几个新坑，记录一下">
+<meta property="og:description" content="微信对于弹窗授权的限制越来越严，wx.getUserInfo 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验 那么现在怎么做微信登录？ 应当通过一个 open-type=&amp;quot;getUserInfo&amp;quot; 的 &amp;lt;button&amp;gt;，让用户显式点击从而弹窗授权，也就说用户主动想登录了，你才能弹窗 但就因为这个按钮，就对微">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:image" content="http://7xn8l1.com1.z0.glb.clouddn.com/icp.png?imageView2/2/w/800/format/webp">
-<meta property="og:updated_time" content="2020-02-01T03:54:38.937Z">
+<meta property="og:updated_time" content="2020-02-01T05:15:00.346Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2018 年 ICP 备案踩坑记录">
-<meta name="twitter:description" content="前几天又做了一次域名备案，没想到又踩上了几个新坑，记录一下">
-<meta name="twitter:image" content="http://7xn8l1.com1.z0.glb.clouddn.com/icp.png?imageView2/2/w/800/format/webp">
+<meta name="twitter:title" content="正确实现微信小程序登录">
+<meta name="twitter:description" content="微信对于弹窗授权的限制越来越严，wx.getUserInfo 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验 那么现在怎么做微信登录？ 应当通过一个 open-type=&amp;quot;getUserInfo&amp;quot; 的 &amp;lt;button&amp;gt;，让用户显式点击从而弹窗授权，也就说用户主动想登录了，你才能弹窗 但就因为这个按钮，就对微">
     
     
     
@@ -166,13 +164,13 @@ var _hmt = _hmt || [];
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title" itemprop="headline">
-            2018 年 ICP 备案踩坑记录
+            正确实现微信小程序登录
         </h1>
     
     <div class="post-meta">
-    <time itemprop="datePublished" content="Wed Mar 21 2018 14:29:35 GMT+0800">
+    <time itemprop="datePublished" content="Sat Feb 01 2020 13:10:45 GMT+0800">
 	
-		    2018年03月21日
+		    2020年02月01日
     	
     </time>
     
@@ -187,22 +185,33 @@ var _hmt = _hmt || [];
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p>前几天又做了一次域名备案，没想到又踩上了几个新坑，记录一下</p>
-<a id="more"></a>
-<h4 id="后缀问题"><a href="#后缀问题" class="headerlink" title="后缀问题"></a>后缀问题</h4><p>不是所有后缀都可以备案，这个大家都知道了，但怎么精准查询哪些能备案呢？</p>
-<p><a href="http://www.miitbeian.gov.cn/" target="_blank" rel="noopener">工信部备案网站</a> 官网 =&gt; 公共查询 =&gt; 域名类型，到这里，好了，坑来了，页面上有个查询表，可以模糊查询还可以精确查询，好像很好使…</p>
-<p><img src="http://7xn8l1.com1.z0.glb.clouddn.com/icp.png?imageView2/2/w/800/format/webp" alt="icp"></p>
-<p>然而…这个不对，这个表里的是已注册的，但并非已批复的，只有工信部明确批复的后缀才可以备案，玄机在图中红框里的链接，点击进去一个新页面</p>
-<p>新页面有个大表格，这应该对了吧，不好意思，这表格里的也不是，真正的列表在页面最下方，有各种<strong>《工业和信息化部关于同意XXXX公司成为YY顶级域名注册管理机构的批复》</strong>，每个文件是一部分域名的批复，所以要看的是这个批复文件列表，在列表里的就可以备案，不在的就不行</p>
-<h4 id="服务商问题"><a href="#服务商问题" class="headerlink" title="服务商问题"></a>服务商问题</h4><p>还记得备案需要域名证书吗？</p>
-<p>以前在 Godaddy 之类国外服务商注册的域名，可以自己用工具生成一张很搞笑的证书</p>
-<p>不好意思：</p>
-<blockquote>
-<p>2018 年 1 月 1 日开始，只有在国内服务商注册的域名才可以在国内备案！！</p>
-</blockquote>
-<p>所以，不要再去国外注册了，一旦你注了，想转移回来是可以的，但是还要注意注册后的 2 个月之内域名是不能转移的（这是注册局规定的，服务商也没办法）</p>
-<p>再有就是域名还必须要实名认证，认证信息和备案时提交的信息必须完全一致</p>
-<p>处处是坑啊！！！</p>
+            <p>微信对于弹窗授权的限制越来越严，<code>wx.getUserInfo</code> 现在不会再弹窗授权，若之前用户未授权则会静默失败，说白了就是防止用户一打开小程序就弹窗让授权，提高用户体验</p>
+<p>那么现在怎么做微信登录？</p>
+<p>应当通过一个 <code>open-type=&quot;getUserInfo&quot;</code> 的 <code>&lt;button&gt;</code>，让用户显式点击从而弹窗授权，也就说用户<strong>主动想登录</strong>了，你才能弹窗</p>
+<p>但就因为这个按钮，就对微信登录的实现产生了很大影响，因为时序变了：</p>
+<p>之前完全可以：</p>
+<ol>
+<li>wx.login 拿到 code，然后 wx.getUserInfo 拿到 userinfo</li>
+<li>一起请求业务 server（同时带上 code 和 userinfo）</li>
+<li>业务 server 先去微信用 code 换 sessionKey，然后用 sessionKey 解密 userinfo 即可</li>
+</ol>
+<p>而现在，就必须在 server 端缓存 sessionKey，为什么呢？</p>
+<ul>
+<li>如果你先 wx.login，不知道用户什么时候会点击按钮，所以没法把 code 和 userinfo 在同一个请求中丢给业务 server</li>
+<li>如果你先让用户点击按钮，在回调中拿到 userinfo 后再 wx.login，再请求业务 server，也不行，这是最大的陷阱。因为回调中拿到的 userinfo 是微信用点击按钮时（时间点 A）你的 sessionKey 加密的，当在回调中已经获得 userinfo 时再次调用 wx.login（时间点B），会修改你的 sessionKey（微信那边你的应用同时只会有一个 sessionKey），所以用这个 code 换回的 sessionKey 已经和时间点 A 的不一样了，是解不开 userinfo 的</li>
+</ul>
+<p>结论：正确的流程：</p>
+<ol>
+<li>当用户进入登录页时，wx.login 拿到 code，请求业务 server，并去微信换 sessionKey，然后缓存起来（注1）</li>
+<li>当用户点击登录按钮时，拿到 userinfo，请求业务 server，server 使用 sessionKey 解密该 userinfo</li>
+<li>之后就没什么好说的，openId 和 unionId 都拿到了，就看你的业务登录怎么实现了</li>
+</ol>
+<p>注1：这个缓存也是有点门道的，因为通过按钮拿到的 userinfo 中，openId 也是密文，因此无法通过 openId 来做关联，所以只能自己实现一套临时 session，要么就用 cookie，要么就自己写一个 uuid 到 client，当用户拿到 userinfo 之后请求时候再带上，道理都一样</p>
+<p>以为这就完了么？NO！</p>
+<p>微信在2019年中又发布了新规，一般应用不得一开始就让用户登录，必须要在用户了解小程序的基本功能之后方可引导登录，也就说不但不能自动弹窗授权，甚至也不能一开始就自动跳登录页，必须设计一些匿名状态可见的页面，然后当用户手动触发某些操作（必须发布内容）才可引导登录</p>
+<p>并且！！登录页除了登录按钮之后，还必须设计拒绝按钮，即用户即使进入了登录页，仍然可以取消并返回匿名状态</p>
+<p>不按照这样设计，对不起，审核打回，改好重新提审。</p>
+<p>怎么说呢，也是好事，规范还是要有，就是苦了程序猿 :(</p>
 
             
                 
@@ -215,7 +224,7 @@ var _hmt = _hmt || [];
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/icp/">icp</a> <a class="tag tag--primary tag--small t-link" href="/tags/备案/">备案</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/getUserInfo/">getUserInfo</a> <a class="tag tag--primary tag--small t-link" href="/tags/审核/">审核</a> <a class="tag tag--primary tag--small t-link" href="/tags/小程序/">小程序</a> <a class="tag tag--primary tag--small t-link" href="/tags/微信登录/">微信登录</a>
 
             </div>
         
@@ -224,7 +233,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/02/01/weixin-miniprogram-login/"  data-tooltip="正确实现微信小程序登录">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -232,7 +241,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/25/qq-weixin-h5-share/" data-tooltip="QQ/微信二次分享">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/21/icp/" data-tooltip="2018 年 ICP 备案踩坑记录">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -242,7 +251,7 @@ var _hmt = _hmt || [];
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action">
-            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2018/03/21/icp/&amp;title=分享博客：Nowhy&#39;s blog 【2018 年 ICP 备案踩坑记录】">
+            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2020/02/01/weixin-miniprogram-login/&amp;title=分享博客：Nowhy&#39;s blog 【正确实现微信小程序登录】">
                 <i class="fa fa-weibo"></i>
             </a>
         </li>
@@ -277,7 +286,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/02/01/weixin-miniprogram-login/"  data-tooltip="正确实现微信小程序登录">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -285,7 +294,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/25/qq-weixin-h5-share/" data-tooltip="QQ/微信二次分享">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/21/icp/" data-tooltip="2018 年 ICP 备案踩坑记录">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -295,7 +304,7 @@ var _hmt = _hmt || [];
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action">
-            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2018/03/21/icp/&amp;title=分享博客：Nowhy&#39;s blog 【2018 年 ICP 备案踩坑记录】">
+            <a class="post-action-btn btn btn--default" target="new" href="http://service.weibo.com/share/share.php?url=http://nowhy.org/2020/02/01/weixin-miniprogram-login/&amp;title=分享博客：Nowhy&#39;s blog 【正确实现微信小程序登录】">
                 <i class="fa fa-weibo"></i>
             </a>
         </li>
@@ -314,17 +323,17 @@ var _hmt = _hmt || [];
                 <div id="share-options-bar" class="share-options-bar" data-behavior="3">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://nowhy.org/2018/03/21/icp/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://nowhy.org/2020/02/01/weixin-miniprogram-login/">
                 <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://nowhy.org/2018/03/21/icp/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://nowhy.org/2020/02/01/weixin-miniprogram-login/">
                 <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://nowhy.org/2018/03/21/icp/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://nowhy.org/2020/02/01/weixin-miniprogram-login/">
                 <i class="fa fa-twitter"></i><span>Share on Twitter</span>
             </a>
         </li>
